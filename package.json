@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Middleware-based data validation and sanitization library",
   "main": "lib/index.js",
+  "repository": "github:envelope/troi",
   "license": "MIT",
   "keywords": [
     "validation"
