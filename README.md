@@ -2,6 +2,8 @@
 
 Troi is a middleware-based data validation and sanitization library.
 
+[![Build Status](https://travis-ci.org/envelope/troi.svg?branch=master)](https://travis-ci.org/envelope/troi)
+
 ## Example
 
 ```JavaScript
