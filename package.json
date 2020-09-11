@@ -1,0 +1,26 @@
+{
+  "name": "troi",
+  "version": "0.0.1",
+  "description": "Middleware-based data validation and sanitization library",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "keywords": [
+    "validation"
+  ],
+  "files": [
+    "chain.js",
+    "index.js",
+    "lib"
+  ],
+  "authors": [
+    "Anders Skouboe <mail@andersskouboe.net> (https://github.com/envelope)"
+  ],
+  "devDependencies": {
+    "eslint": "^7.8.1",
+    "jest": "^26.4.2"
+  },
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint *.js lib test"
+  }
+}
