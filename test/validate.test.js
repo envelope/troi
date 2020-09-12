@@ -106,6 +106,27 @@ test('integer', () => {
   expect(next).toHaveBeenCalledWith(100);
 });
 
+test('boolean', () => {
+  const boolean = validate.boolean();
+  const next = jest.fn(identity);
+  const errorShape = { type: 'type', params: { type: 'boolean' } };
+
+  expect(boolean('string', next)).toMatchValidationError(errorShape);
+  expect(next).not.toHaveBeenCalled();
+
+  expect(boolean('true', next)).toMatchValidationError(errorShape);
+  expect(next).not.toHaveBeenCalled();
+
+  expect(boolean(undefined, next)).toMatchValidationError(errorShape);
+  expect(next).not.toHaveBeenCalled();
+
+  expect(boolean(true, next)).toBe(true);
+  expect(next).toHaveBeenCalledWith(true);
+
+  expect(boolean(false, next)).toBe(false);
+  expect(next).toHaveBeenCalledWith(false);
+});
+
 test('oneOf', () => {
   const values = ['string', 100, true, null];
   const next = jest.fn(identity);
