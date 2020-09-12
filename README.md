@@ -30,6 +30,7 @@ Work in progress
 #### `string()`
 #### `number()`
 #### `integer()`
+#### `boolean()`
 #### `array(itemValidator?: function)`
 #### `object(properties?: object)`
 #### `oneOf(values: Array<any>)`
