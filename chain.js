@@ -22,6 +22,16 @@ const chainable = (factory) => (...args) => {
     return result;
   };
 
+  builder.validate = (value) => {
+    const result = builder(value);
+
+    if (isValidationError(result)) {
+      throw result;
+    }
+
+    return result;
+  };
+
   keys
     .forEach((key) => {
       builder[key] = (...a) => {
