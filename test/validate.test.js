@@ -195,6 +195,29 @@ test('minLength', () => {
   expect(next).toHaveBeenCalledWith(['a', 'b']);
 });
 
+test('maxLength', () => {
+  const maxLength = validate.maxLength(2);
+  const next = jest.fn(identity);
+
+  expect(maxLength('abc', next)).toMatchValidationError({
+    type: 'maxLength',
+    params: { max: 2, length: 3 }
+  });
+  expect(next).not.toHaveBeenCalled();
+
+  expect(maxLength([1, 2, 3], next)).toMatchValidationError({
+    type: 'maxLength',
+    params: { max: 2, length: 3 }
+  });
+  expect(next).not.toHaveBeenCalled();
+
+  expect(maxLength('ab', next)).toBe('ab');
+  expect(next).toHaveBeenCalledWith('ab');
+
+  expect(maxLength(['a', 'b'], next)).toEqual(['a', 'b']);
+  expect(next).toHaveBeenCalledWith(['a', 'b']);
+});
+
 test('lengthBetween', () => {
   const lengthBetween = validate.lengthBetween(2, 3);
   const next = jest.fn(identity);
