@@ -21,10 +21,26 @@ const schema = troi.object({
     .string()
     .trim()
     .lengthBetween(2, 10),
+  email: troi.filled()
+    .lowercase()
+    .email(),
   password: troi.filled()
     .string()
-    .pattern(/^[a-zA-Z0-9]{3,30}$/);
+    .lengthBetween(3, 30)
+    .pattern(/^[a-zA-Z0-9]+$/)
 });
+
+schema.validate({
+  username: 'karate-kid',
+  email: 'larusso@example.org',
+  password: 'n0C0br4k4i'
+});
+// -> { username: 'karate-kid', email: 'larusso@example.org', password: 'N0C0br4k4i' }
+
+schema.validate({
+  username: 'karate-kid'
+});
+// Throws validation error
 ```
 
 ### API

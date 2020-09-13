@@ -19,7 +19,7 @@ test('example', () => {
       .pattern(/^[a-zA-Z0-9]+$/)
   });
 
-  const params = schema({
+  const params = schema.validate({
     username: ' envelope ',
     email: 'JOHN@DOE.COM',
     password: 'Secure1337'
@@ -57,5 +57,21 @@ describe('builder', () => {
 
     expect(run([trimString, lowerCase], '  INPUT  ')).toBe('input');
     expect(run([trimString, lowerCase], null)).toBeValidationError();
+  });
+});
+
+describe('builder.validate()', () => {
+  const builder = troi.nullable().string();
+
+  it('returns value', () => {
+    expect(builder.validate('string')).toBe('string');
+    expect(builder.validate(null)).toBe(null);
+  });
+
+  it('throws validation errors', () => {
+    expect(() => builder.validate(1234)).toThrowAndMatchValidationError({
+      type: 'type',
+      params: { type: 'string' }
+    });
   });
 });
