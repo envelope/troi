@@ -8,7 +8,19 @@ const keys = Object.keys(handlers);
 
 const chainable = (factory) => (...args) => {
   const validators = [factory(...args)];
-  const builder = (value, next) => run(validators, value, next);
+  const builder = (value, next) => {
+    const result = run(validators, value);
+
+    if (isValidationError(result)) {
+      return result;
+    }
+
+    if (next) {
+      return next(result);
+    }
+
+    return result;
+  };
 
   keys
     .forEach((key) => {
