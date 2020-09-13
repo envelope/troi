@@ -1,4 +1,5 @@
 const troi = require('../chain');
+const run = require('../lib/run');
 const validate = require('../lib/validate');
 const transform = require('../lib/transform');
 const { ValidationError, isValidationError } = require('../lib/errors');
@@ -47,4 +48,14 @@ it('exports all available validate and transform functions', () => {
 it('exports ValidationError', () => {
   expect(troi).toHaveProperty('ValidationError', ValidationError);
   expect(troi).toHaveProperty('isValidationError', isValidationError);
+});
+
+describe('builder', () => {
+  it('returns a valid middleware function', () => {
+    const trimString = troi.trim().string();
+    const lowerCase = troi.lowercase();
+
+    expect(run([trimString, lowerCase], '  INPUT  ')).toBe('input');
+    expect(run([trimString, lowerCase], null)).toBeValidationError();
+  });
 });
