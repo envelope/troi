@@ -319,6 +319,9 @@ describe('object', () => {
 
     expect(object(true, next)).toMatchValidationError(errorShape);
     expect(next).not.toHaveBeenCalled();
+
+    expect(object([], next)).toMatchValidationError(errorShape);
+    expect(next).not.toHaveBeenCalled();
   });
 
   it('does not assign undefined values if input property is absent', () => {
