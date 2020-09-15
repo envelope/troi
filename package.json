@@ -1,6 +1,6 @@
 {
   "name": "troi",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Middleware-based data validation and sanitization library",
   "main": "lib/index.js",
   "repository": "github:envelope/troi",
