@@ -56,6 +56,7 @@ Work in progress
 #### `boolean()`
 #### `array(itemValidator?: function)`
 #### `object(properties?: object)`
+#### `params(schema: object)`
 #### `oneOf(values: Array<any>)`
 #### `between(min: number, max: number)`
 #### `lengthBetween(min: number, max: number)`

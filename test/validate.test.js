@@ -378,6 +378,121 @@ describe('object', () => {
   });
 });
 
+describe('params', () => {
+  it('throws if given an invalid `schema` argument', () => {
+    const errorMessage = 'Expected the `schema` argument to be an object';
+
+    expect(() => validate.params()).toThrow(errorMessage);
+    expect(() => validate.params(null)).toThrow(errorMessage);
+    expect(() => validate.params('string')).toThrow(errorMessage);
+  });
+
+  describe('validation', () => {
+    let params;
+    let next;
+
+    beforeEach(() => {
+      params = validate.params({
+        number: validate.number(),
+        string: validate.string(),
+        array: validate.array(validate.string()),
+        trim: (value, next) => next(value.trim()),
+        anything: (value, next) => next(value),
+        nested: validate.params({
+          string: validate.filled()
+        })
+      });
+      next = jest.fn(identity);
+    });
+
+    it('returns type validation error if given a non-valid object', () => {
+      const errorShape = { type: 'type', params: { type: 'object' } };
+
+      expect(params(null, next)).toMatchValidationError(errorShape);
+      expect(next).not.toHaveBeenCalled();
+
+      expect(params(undefined, next)).toMatchValidationError(errorShape);
+      expect(next).not.toHaveBeenCalled();
+
+      expect(params('string', next)).toMatchValidationError(errorShape);
+      expect(next).not.toHaveBeenCalled();
+
+      expect(params(12345, next)).toMatchValidationError(errorShape);
+      expect(next).not.toHaveBeenCalled();
+
+      expect(params(['a', 'b', 'c'], next)).toMatchValidationError(errorShape);
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('validates each field and strips unknown properties', () => {
+      const result = params({
+        number: 1234,
+        string: 'string',
+        array: ['string'],
+        trim: '  trimmed ',
+        nested: { string: 'nested.string' },
+        anything: [],
+        unknown: true,
+      }, next);
+
+      const expected = {
+        number: 1234,
+        string: 'string',
+        array: ['string'],
+        trim: 'trimmed',
+        nested: { string: 'nested.string' },
+        anything: []
+      };
+
+      expect(result).not.toHaveProperty('unknown');
+      expect(result).toEqual(expected);
+      expect(next).toHaveBeenCalledWith(result);
+    });
+
+    it('handles validation errors', () => {
+      const error = params({
+        number: 1234,
+        string: 1234,
+        array: [1234],
+        trim: 'trim',
+        nested: {},
+        anything: [],
+      });
+
+      expect(error).toBeValidationError();
+      expect(error.errors).toHaveLength(3);
+      expect(error.errors[0]).toMatchValidationError({
+        type: 'type',
+        params: { type: 'string' },
+        path: 'string'
+      });
+      expect(error.errors[1]).toMatchValidationError({
+        type: 'type',
+        params: { type: 'string' },
+        path: 'array[0]'
+      });
+      expect(error.errors[2]).toMatchValidationError({
+        type: 'filled',
+        path: 'nested.string'
+      });
+    });
+
+    it('does not assign undefined properties', () => {
+      const result = params({
+        number: 1234,
+        string: 'string',
+        array: ['string'],
+        trim: '  trimmed ',
+        nested: { string: 'nested.string' },
+        anything: undefined,
+        unknown: true,
+      }, next);
+
+      expect(result).not.toHaveProperty('anything');
+    });
+  });
+});
+
 describe('array', () => {
   it('throws if itemValidator argument is defined and not a function', () => {
     const errorMessage = 'Expected `itemValidator` argument to be a function';
