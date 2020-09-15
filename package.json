@@ -23,5 +23,6 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint *.js lib test"
-  }
+  },
+  "runkitExample": "const troi = require('troi/chain');"
 }
