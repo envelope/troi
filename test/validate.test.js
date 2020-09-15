@@ -127,29 +127,40 @@ test('boolean', () => {
   expect(next).toHaveBeenCalledWith(false);
 });
 
-test('oneOf', () => {
-  const values = ['string', 100, true, null];
-  const next = jest.fn(identity);
-  const oneOf = validate.oneOf(values);
-  const errorShape = { type: 'oneOf', params: { values } };
+describe('oneOf', () => {
+  it('throws if `values` argument is not an array', () => {
+    const errorMessage = 'Expected `values` argument to be an array';
 
-  expect(oneOf(false, next)).toMatchValidationError(errorShape);
-  expect(next).not.toHaveBeenCalled();
+    expect(() => validate.oneOf()).toThrow(errorMessage);
+    expect(() => validate.oneOf(1234)).toThrow(errorMessage);
+    expect(() => validate.oneOf('string')).toThrow(errorMessage);
+    expect(() => validate.oneOf({})).toThrow(errorMessage);
+  });
 
-  expect(oneOf(undefined, next)).toMatchValidationError(errorShape);
-  expect(next).not.toHaveBeenCalled();
+  it('checks whether or not the given value is in the `values` array', () => {
+    const values = ['string', 100, true, null];
+    const next = jest.fn(identity);
+    const oneOf = validate.oneOf(values);
+    const errorShape = { type: 'oneOf', params: { values } };
 
-  expect(oneOf('string', next)).toBe('string');
-  expect(next).toHaveBeenCalledWith('string');
+    expect(oneOf(false, next)).toMatchValidationError(errorShape);
+    expect(next).not.toHaveBeenCalled();
 
-  expect(oneOf(100, next)).toBe(100);
-  expect(next).toHaveBeenCalledWith(100);
+    expect(oneOf(undefined, next)).toMatchValidationError(errorShape);
+    expect(next).not.toHaveBeenCalled();
 
-  expect(oneOf(true, next)).toBe(true);
-  expect(next).toHaveBeenCalledWith(true);
+    expect(oneOf('string', next)).toBe('string');
+    expect(next).toHaveBeenCalledWith('string');
 
-  expect(oneOf(null, next)).toBe(null);
-  expect(next).toHaveBeenCalledWith(null);
+    expect(oneOf(100, next)).toBe(100);
+    expect(next).toHaveBeenCalledWith(100);
+
+    expect(oneOf(true, next)).toBe(true);
+    expect(next).toHaveBeenCalledWith(true);
+
+    expect(oneOf(null, next)).toBe(null);
+    expect(next).toHaveBeenCalledWith(null);
+  });
 });
 
 test('pattern', () => {
