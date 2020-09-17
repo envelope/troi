@@ -49,7 +49,7 @@ test('nullable', () => {
 test('string', () => {
   const string = validate.string();
   const next = jest.fn(identity);
-  const errorShape = { type: 'type', params: { type: 'string' } };
+  const errorShape = { type: 'string' };
 
   expect(string(undefined, next)).toMatchValidationError(errorShape);
   expect(next).not.toHaveBeenCalled();
@@ -67,7 +67,7 @@ test('string', () => {
 test('number', () => {
   const number = validate.number();
   const next = jest.fn(identity);
-  const errorShape = { type: 'type', params: { type: 'number' } };
+  const errorShape = { type: 'number' };
 
   expect(number(undefined, next)).toMatchValidationError(errorShape);
   expect(next).not.toHaveBeenCalled();
@@ -91,7 +91,7 @@ test('number', () => {
 test('integer', () => {
   const integer = validate.integer();
   const next = jest.fn(identity);
-  const errorShape = { type: 'type', params: { type: 'integer' } };
+  const errorShape = { type: 'integer' };
 
   expect(integer(NaN, next)).toMatchValidationError(errorShape);
   expect(next).not.toHaveBeenCalled();
@@ -109,7 +109,7 @@ test('integer', () => {
 test('boolean', () => {
   const boolean = validate.boolean();
   const next = jest.fn(identity);
-  const errorShape = { type: 'type', params: { type: 'boolean' } };
+  const errorShape = { type: 'boolean' };
 
   expect(boolean('string', next)).toMatchValidationError(errorShape);
   expect(next).not.toHaveBeenCalled();
@@ -306,7 +306,7 @@ describe('object', () => {
   it('returns validation error if input is not an object', () => {
     const object = validate.object();
     const next = jest.fn(identity);
-    const errorShape = { type: 'type', params: { type: 'object' } };
+    const errorShape = { type: 'object' };
 
     expect(object(null, next)).toMatchValidationError(errorShape);
     expect(next).not.toHaveBeenCalled();
@@ -348,13 +348,11 @@ describe('object', () => {
     expect(error).toBeValidationError();
     expect(error.errors).toHaveLength(2);
     expect(error.errors[0]).toMatchValidationError({
-      type: 'type',
-      params: { type: 'string' },
+      type: 'string',
       path: 'property'
     });
     expect(error.errors[1]).toMatchValidationError({
-      type: 'type',
-      params: { type: 'number' },
+      type: 'number',
       path: 'nested.property'
     });
   });
@@ -396,8 +394,8 @@ describe('params', () => {
       next = jest.fn(identity);
     });
 
-    it('returns type validation error if given a non-valid object', () => {
-      const errorShape = { type: 'type', params: { type: 'object' } };
+    it('returns validation error if given a non-valid object', () => {
+      const errorShape = { type: 'object' };
 
       expect(params(null, next)).toMatchValidationError(errorShape);
       expect(next).not.toHaveBeenCalled();
@@ -453,13 +451,11 @@ describe('params', () => {
       expect(error).toBeValidationError();
       expect(error.errors).toHaveLength(3);
       expect(error.errors[0]).toMatchValidationError({
-        type: 'type',
-        params: { type: 'string' },
+        type: 'string',
         path: 'string'
       });
       expect(error.errors[1]).toMatchValidationError({
-        type: 'type',
-        params: { type: 'string' },
+        type: 'string',
         path: 'array[0]'
       });
       expect(error.errors[2]).toMatchValidationError({
@@ -498,8 +494,7 @@ describe('array', () => {
     const value = ['100', true];
 
     expect(array(null, next)).toMatchValidationError({
-      type: 'type',
-      params: { type: 'array' }
+      type: 'array'
     });
     expect(next).not.toHaveBeenCalled();
 
@@ -533,13 +528,11 @@ describe('array', () => {
     expect(error).toBeValidationError();
     expect(error.errors).toHaveLength(2);
     expect(error.errors[0]).toMatchValidationError({
-      type: 'type',
-      params: { type: 'string' },
+      type: 'string',
       path: '[0]'
     });
     expect(error.errors[1]).toMatchValidationError({
-      type: 'type',
-      params: { type: 'string' },
+      type: 'string',
       path: '[2]'
     });
   });
@@ -551,13 +544,11 @@ describe('array', () => {
     expect(error).toBeValidationError();
     expect(error.errors).toHaveLength(2);
     expect(error.errors[0]).toMatchValidationError({
-      type: 'type',
-      params: { type: 'string' },
+      type: 'string',
       path: '[0][0]'
     });
     expect(error.errors[1]).toMatchValidationError({
-      type: 'type',
-      params: { type: 'string' },
+      type: 'string',
       path: '[2][1]'
     });
   });
