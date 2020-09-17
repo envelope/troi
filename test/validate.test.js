@@ -5,7 +5,10 @@ test('required', () => {
   const required = validate.required();
   const next = jest.fn(identity);
 
-  expect(required(undefined, next)).toMatchValidationError({ type: 'required' });
+  expect(required(undefined, next)).toMatchValidationError({
+    type: 'required',
+    params: { value: undefined }
+  });
   expect(next).not.toHaveBeenCalled();
 
   expect(required(null, next)).toBe(null);
@@ -49,12 +52,17 @@ test('nullable', () => {
 test('string', () => {
   const string = validate.string();
   const next = jest.fn(identity);
-  const errorShape = { type: 'string' };
 
-  expect(string(undefined, next)).toMatchValidationError(errorShape);
+  expect(string(undefined, next)).toMatchValidationError({
+    type: 'string',
+    params: { value: undefined }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(string(100, next)).toMatchValidationError(errorShape);
+  expect(string(100, next)).toMatchValidationError({
+    type: 'string',
+    params: { value: 100 }
+  });
   expect(next).not.toHaveBeenCalled();
 
   expect(string('string', next)).toBe('string');
@@ -67,18 +75,29 @@ test('string', () => {
 test('number', () => {
   const number = validate.number();
   const next = jest.fn(identity);
-  const errorShape = { type: 'number' };
 
-  expect(number(undefined, next)).toMatchValidationError(errorShape);
+  expect(number(undefined, next)).toMatchValidationError({
+    type: 'number',
+    params: { value: undefined }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(number(NaN, next)).toMatchValidationError(errorShape);
+  expect(number(NaN, next)).toMatchValidationError({
+    type: 'number',
+    params: { value: NaN }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(number(Infinity, next)).toMatchValidationError(errorShape);
+  expect(number(Infinity, next)).toMatchValidationError({
+    type: 'number',
+    params: { value: Infinity }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(number('200', next)).toMatchValidationError(errorShape);
+  expect(number('200', next)).toMatchValidationError({
+    type: 'number',
+    params: { value: '200' }
+  });
   expect(next).not.toHaveBeenCalled();
 
   expect(number(200, next)).toBe(200);
@@ -91,15 +110,23 @@ test('number', () => {
 test('integer', () => {
   const integer = validate.integer();
   const next = jest.fn(identity);
-  const errorShape = { type: 'integer' };
 
-  expect(integer(NaN, next)).toMatchValidationError(errorShape);
+  expect(integer(NaN, next)).toMatchValidationError({
+    type: 'integer',
+    params: { value: NaN }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(integer(Infinity, next)).toMatchValidationError(errorShape);
+  expect(integer(Infinity, next)).toMatchValidationError({
+    type: 'integer',
+    params: { value: Infinity }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(integer(20.3, next)).toMatchValidationError(errorShape);
+  expect(integer(20.3, next)).toMatchValidationError({
+    type: 'integer',
+    params: { value: 20.3 }
+  });
   expect(next).not.toHaveBeenCalled();
 
   expect(integer(100, next)).toBe(100);
@@ -109,15 +136,23 @@ test('integer', () => {
 test('boolean', () => {
   const boolean = validate.boolean();
   const next = jest.fn(identity);
-  const errorShape = { type: 'boolean' };
 
-  expect(boolean('string', next)).toMatchValidationError(errorShape);
+  expect(boolean('string', next)).toMatchValidationError({
+    type: 'boolean',
+    params: { value: 'string' }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(boolean('true', next)).toMatchValidationError(errorShape);
+  expect(boolean('true', next)).toMatchValidationError({
+    type: 'boolean',
+    params: { value: 'true' }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(boolean(undefined, next)).toMatchValidationError(errorShape);
+  expect(boolean(undefined, next)).toMatchValidationError({
+    type: 'boolean',
+    params: { value: undefined }
+  });
   expect(next).not.toHaveBeenCalled();
 
   expect(boolean(true, next)).toBe(true);
@@ -141,12 +176,17 @@ describe('oneOf', () => {
     const values = ['string', 100, true, null];
     const next = jest.fn(identity);
     const oneOf = validate.oneOf(values);
-    const errorShape = { type: 'oneOf', params: { values } };
 
-    expect(oneOf(false, next)).toMatchValidationError(errorShape);
+    expect(oneOf(false, next)).toMatchValidationError({
+      type: 'oneOf',
+      params: { values, value: false }
+    });
     expect(next).not.toHaveBeenCalled();
 
-    expect(oneOf(undefined, next)).toMatchValidationError(errorShape);
+    expect(oneOf(undefined, next)).toMatchValidationError({
+      type: 'oneOf',
+      params: { values, value: undefined }
+    });
     expect(next).not.toHaveBeenCalled();
 
     expect(oneOf('string', next)).toBe('string');
@@ -168,14 +208,16 @@ test('pattern', () => {
   const pattern = validate.pattern(regexp);
   const patternWithType = validate.pattern(regexp, 'digits');
   const next = jest.fn(identity);
-  const errorShape = { type: 'pattern', params: { pattern: regexp } };
 
-  expect(pattern('abc', next)).toMatchValidationError(errorShape);
+  expect(pattern('abc', next)).toMatchValidationError({
+    type: 'pattern',
+    params: { pattern: regexp, value: 'abc' }
+  });
   expect(next).not.toHaveBeenCalled();
 
   expect(patternWithType('abc', next)).toMatchValidationError({
     type: 'digits',
-    params: { pattern: regexp }
+    params: { pattern: regexp, value: 'abc' }
   });
   expect(next).not.toHaveBeenCalled();
 
@@ -189,13 +231,13 @@ test('minLength', () => {
 
   expect(minLength('a', next)).toMatchValidationError({
     type: 'minLength',
-    params: { min: 2, length: 1 }
+    params: { min: 2, length: 1, value: 'a' }
   });
   expect(next).not.toHaveBeenCalled();
 
   expect(minLength([1], next)).toMatchValidationError({
     type: 'minLength',
-    params: { min: 2, length: 1 }
+    params: { min: 2, length: 1, value: [1] }
   });
   expect(next).not.toHaveBeenCalled();
 
@@ -212,13 +254,13 @@ test('maxLength', () => {
 
   expect(maxLength('abc', next)).toMatchValidationError({
     type: 'maxLength',
-    params: { max: 2, length: 3 }
+    params: { max: 2, length: 3, value: 'abc' }
   });
   expect(next).not.toHaveBeenCalled();
 
   expect(maxLength([1, 2, 3], next)).toMatchValidationError({
     type: 'maxLength',
-    params: { max: 2, length: 3 }
+    params: { max: 2, length: 3, value: [1, 2, 3] }
   });
   expect(next).not.toHaveBeenCalled();
 
@@ -235,22 +277,22 @@ test('lengthBetween', () => {
 
   expect(lengthBetween('a', next)).toMatchValidationError({
     type: 'lengthBetween',
-    params: { min: 2, max: 3, length: 1 }
+    params: { min: 2, max: 3, length: 1, value: 'a' }
   });
 
   expect(lengthBetween('abcd', next)).toMatchValidationError({
     type: 'lengthBetween',
-    params: { min: 2, max: 3, length: 4 }
+    params: { min: 2, max: 3, length: 4, value: 'abcd' }
   });
 
   expect(lengthBetween(['a'], next)).toMatchValidationError({
     type: 'lengthBetween',
-    params: { min: 2, max: 3, length: 1 }
+    params: { min: 2, max: 3, length: 1, value: ['a'] }
   });
 
   expect(lengthBetween(['a', 'c', 'd', 'e'], next)).toMatchValidationError({
     type: 'lengthBetween',
-    params: { min: 2, max: 3, length: 4 }
+    params: { min: 2, max: 3, length: 4, value: ['a', 'c', 'd', 'e'] }
   });
 
   expect(lengthBetween('ab', next)).toBe('ab');
@@ -263,12 +305,17 @@ test('lengthBetween', () => {
 test('between', () => {
   const between = validate.between(2, 4);
   const next = jest.fn(identity);
-  const errorShape = { type: 'between', params: { min: 2, max: 4 } };
 
-  expect(between(1, next)).toMatchValidationError(errorShape);
+  expect(between(1, next)).toMatchValidationError({
+    type: 'between',
+    params: { min: 2, max: 4, value: 1 }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(between(5, next)).toMatchValidationError(errorShape);
+  expect(between(5, next)).toMatchValidationError({
+    type: 'between',
+    params: { min: 2, max: 4, value: 5 }
+  });
   expect(next).not.toHaveBeenCalled();
 
   expect(between(2, next)).toBe(2);
@@ -281,18 +328,29 @@ test('between', () => {
 test('filled', () => {
   const filled = validate.filled();
   const next = jest.fn(identity);
-  const errorShape = { type: 'filled' };
 
-  expect(filled(null, next)).toMatchValidationError(errorShape);
+  expect(filled(null, next)).toMatchValidationError({
+    type: 'filled',
+    params: { value: null }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(filled('', next)).toMatchValidationError(errorShape);
+  expect(filled('', next)).toMatchValidationError({
+    type: 'filled',
+    params: { value: '' }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(filled('   ', next)).toMatchValidationError(errorShape);
+  expect(filled('   ', next)).toMatchValidationError({
+    type: 'filled',
+    params: { value: '   ' }
+  });
   expect(next).not.toHaveBeenCalled();
 
-  expect(filled([], next)).toMatchValidationError(errorShape);
+  expect(filled([], next)).toMatchValidationError({
+    type: 'filled',
+    params: { value: [] }
+  });
   expect(next).not.toHaveBeenCalled();
 
   expect(filled('string', next)).toBe('string');
@@ -306,21 +364,35 @@ describe('object', () => {
   it('returns validation error if input is not an object', () => {
     const object = validate.object();
     const next = jest.fn(identity);
-    const errorShape = { type: 'object' };
 
-    expect(object(null, next)).toMatchValidationError(errorShape);
+    expect(object(null, next)).toMatchValidationError({
+      type: 'object',
+      params: { value: null }
+    });
     expect(next).not.toHaveBeenCalled();
 
-    expect(object(undefined, next)).toMatchValidationError(errorShape);
+    expect(object(undefined, next)).toMatchValidationError({
+      type: 'object',
+      params: { value: undefined }
+    });
     expect(next).not.toHaveBeenCalled();
 
-    expect(object('string', next)).toMatchValidationError(errorShape);
+    expect(object('string', next)).toMatchValidationError({
+      type: 'object',
+      params: { value: 'string' }
+    });
     expect(next).not.toHaveBeenCalled();
 
-    expect(object(true, next)).toMatchValidationError(errorShape);
+    expect(object(true, next)).toMatchValidationError({
+      type: 'object',
+      params: { value: true }
+    });
     expect(next).not.toHaveBeenCalled();
 
-    expect(object([], next)).toMatchValidationError(errorShape);
+    expect(object([], next)).toMatchValidationError({
+      type: 'object',
+      value: null
+    });
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -395,21 +467,34 @@ describe('params', () => {
     });
 
     it('returns validation error if given a non-valid object', () => {
-      const errorShape = { type: 'object' };
-
-      expect(params(null, next)).toMatchValidationError(errorShape);
+      expect(params(null, next)).toMatchValidationError({
+        type: 'object',
+        params: { value: null }
+      });
       expect(next).not.toHaveBeenCalled();
 
-      expect(params(undefined, next)).toMatchValidationError(errorShape);
+      expect(params(undefined, next)).toMatchValidationError({
+        type: 'object',
+        params: { value: undefined }
+      });
       expect(next).not.toHaveBeenCalled();
 
-      expect(params('string', next)).toMatchValidationError(errorShape);
+      expect(params('string', next)).toMatchValidationError({
+        type: 'object',
+        params: { value: 'string' }
+      });
       expect(next).not.toHaveBeenCalled();
 
-      expect(params(12345, next)).toMatchValidationError(errorShape);
+      expect(params(12345, next)).toMatchValidationError({
+        type: 'object',
+        params: { value: 12345 }
+      });
       expect(next).not.toHaveBeenCalled();
 
-      expect(params(['a', 'b', 'c'], next)).toMatchValidationError(errorShape);
+      expect(params(['a', 'b', 'c'], next)).toMatchValidationError({
+        type: 'object',
+        params: { value: ['a', 'b', 'c'] }
+      });
       expect(next).not.toHaveBeenCalled();
     });
 
@@ -494,7 +579,8 @@ describe('array', () => {
     const value = ['100', true];
 
     expect(array(null, next)).toMatchValidationError({
-      type: 'array'
+      type: 'array',
+      params: { value: null }
     });
     expect(next).not.toHaveBeenCalled();
 

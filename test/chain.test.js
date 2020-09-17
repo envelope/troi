@@ -70,7 +70,8 @@ describe('builder.validate()', () => {
 
   it('throws validation errors', () => {
     expect(() => builder.validate(1234)).toThrowAndMatchValidationError({
-      type: 'string'
+      type: 'string',
+      params: { value: 1234 }
     });
   });
 });
