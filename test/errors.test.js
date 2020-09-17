@@ -5,6 +5,12 @@ const {
 } = require('../lib/errors');
 
 describe('ValidationError', () => {
+  it('has correct name', () => {
+    const error = new ValidationError('error1');
+
+    expect(error).toHaveProperty('name', 'ValidationError');
+  });
+
   describe('when given an array of errors', () => {
     const error1 = new ValidationError('error1');
     const error2 = new ValidationError('error2');
