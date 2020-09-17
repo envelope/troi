@@ -303,7 +303,7 @@ test('filled', () => {
 });
 
 describe('object', () => {
-  it('returns validation if input is not an object', () => {
+  it('returns validation error if input is not an object', () => {
     const object = validate.object();
     const next = jest.fn(identity);
     const errorShape = { type: 'type', params: { type: 'object' } };
@@ -324,22 +324,13 @@ describe('object', () => {
     expect(next).not.toHaveBeenCalled();
   });
 
-  it('does not assign undefined values if input property is absent', () => {
+  it('assigns undefined values based on input property presence', () => {
     const object = validate.object({
       username: () => undefined
     });
 
-    const result = object({}, identity);
-    expect(result).not.toHaveProperty('username');
-  });
-
-  it('assigns undefined values if input property is present', () => {
-    const object = validate.object({
-      username: () => undefined
-    });
-
-    const result = object({ username: undefined }, identity);
-    expect(result).toHaveProperty('username');
+    expect(object({}, identity)).not.toHaveProperty('username');
+    expect(object({ username: undefined }, identity)).toHaveProperty('username');
   });
 
   it('can validate nested objects', () => {
