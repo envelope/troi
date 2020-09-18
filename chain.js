@@ -6,10 +6,9 @@ const transform = require('./lib/transform');
 const handlers = { ...validate, ...transform };
 const keys = Object.keys(handlers);
 
-const chainable = (factory) => (...args) => {
-  const validators = [factory(...args)];
+const createBuilder = (middleware) => {
   const builder = (value, next) => {
-    const result = run(validators, value);
+    const result = run(middleware, value);
 
     if (isValidationError(result)) {
       return result;
@@ -35,12 +34,19 @@ const chainable = (factory) => (...args) => {
   keys
     .forEach((key) => {
       builder[key] = (...a) => {
-        validators.push(handlers[key](...a));
-        return builder;
+        const func = handlers[key](...a);
+        const nextMiddleware = [...middleware, func];
+
+        return createBuilder(nextMiddleware);
       };
     });
 
   return builder;
+};
+
+const chainable = (factory) => (...args) => {
+  const validators = [factory(...args)];
+  return createBuilder(validators);
 };
 
 keys.forEach((key) => {

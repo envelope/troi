@@ -58,6 +58,18 @@ describe('builder', () => {
     expect(run([trimString, lowerCase], '  INPUT  ')).toBe('input');
     expect(run([trimString, lowerCase], null)).toBeValidationError();
   });
+
+  it('is immutable', () => {
+    const string = troi.string();
+    const builder1 = string.trim();
+    const builder2 = string.maxLength(3);
+
+    expect(builder1).not.toBe(builder2);
+    expect(builder1.validate('  string  ')).toBe('string');
+    expect(builder2.validate(' a ')).toBe(' a ');
+    expect(() => builder2.validate('abcd'))
+      .toThrowAndMatchValidationError({ type: 'maxLength' });
+  });
 });
 
 describe('builder.validate()', () => {
