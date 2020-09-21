@@ -31,6 +31,12 @@ const createBuilder = (middleware) => {
     return result;
   };
 
+  builder.add = (func) => {
+    const nextMiddleware = [...middleware, func];
+
+    return createBuilder(nextMiddleware);
+  };
+
   keys
     .forEach((key) => {
       builder[key] = (...a) => {

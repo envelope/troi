@@ -38,7 +38,7 @@ it('returns a chainable function', () => {
   expect(typeof required).toBe('function');
 });
 
-it('exports all available validate and transform functions', () => {
+it('exports built-in middleware functions', () => {
   const keys = Object.keys(troi);
   const expected = Object.keys({ ...validate, ...transform });
 
@@ -69,6 +69,18 @@ describe('builder', () => {
     expect(builder2.validate(' a ')).toBe(' a ');
     expect(() => builder2.validate('abcd'))
       .toThrowAndMatchValidationError({ type: 'maxLength' });
+  });
+});
+
+describe('builder.use()', () => {
+  it('adds given middleware and returns a new builder', () => {
+    const middleware = jest.fn((value, next) => next(value));
+    const builder1 = troi.filled();
+    const builder2 = builder1.add(middleware);
+
+    expect(builder2).not.toBe(builder1);
+    expect(builder2.validate('string')).toBe('string');
+    expect(middleware).toHaveBeenCalledWith('string', expect.any(Function));
   });
 });
 
