@@ -162,6 +162,45 @@ test('boolean', () => {
   expect(next).toHaveBeenCalledWith(false);
 });
 
+describe('date', () => {
+  const middleware = validate.date();
+
+  it('returns value if input is a valid date', () => {
+    const next = jest.fn(identity);
+    const date = new Date();
+
+    expect(middleware(date, next)).toBe(date);
+    expect(next).toHaveBeenCalledWith(date);
+  });
+
+  it('returns validation error if input is an invalid date', () => {
+    const next = jest.fn(identity);
+    const date = new Date('abcdefgh');
+
+    expect(middleware(date, next)).toMatchValidationError({
+      type: 'date',
+      params: { value: date }
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('returns validation error if value is a non-date value', () => {
+    const next = jest.fn(identity);
+
+    expect(middleware(null, next)).toMatchValidationError({
+      type: 'date',
+      params: { value: null }
+    });
+    expect(next).not.toHaveBeenCalled();
+
+    expect(middleware('2020', next)).toMatchValidationError({
+      type: 'date',
+      params: { value: '2020' }
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
+});
+
 describe('oneOf', () => {
   it('throws if `values` argument is not an array', () => {
     const errorMessage = 'Expected `values` argument to be an array';
