@@ -54,6 +54,7 @@ Work in progress
 #### `number()`
 #### `integer()`
 #### `boolean()`
+#### `date()`
 #### `array(itemValidator?: function)`
 #### `object(properties?: object)`
 #### `params(schema: object)`
