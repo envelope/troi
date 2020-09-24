@@ -59,6 +59,8 @@ Work in progress
 #### `params(schema: object)`
 #### `oneOf(values: Array<any>)`
 #### `between(min: number, max: number)`
+#### `min(min: number)`
+#### `max(max: number)`
 #### `lengthBetween(min: number, max: number)`
 #### `minLength(min: number)`
 #### `maxLength(min: number)`

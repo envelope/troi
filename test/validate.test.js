@@ -325,6 +325,40 @@ test('between', () => {
   expect(next).toHaveBeenCalledWith(4);
 });
 
+test('min', () => {
+  const min = validate.min(2);
+  const next = jest.fn(identity);
+
+  expect(min(1, next)).toMatchValidationError({
+    type: 'min',
+    params: { min: 2, value: 1 }
+  });
+  expect(next).not.toHaveBeenCalled();
+
+  expect(min(2, next)).toBe(2);
+  expect(next).toHaveBeenCalledWith(2);
+
+  expect(min(10, next)).toBe(10);
+  expect(next).toHaveBeenCalledWith(10);
+});
+
+test('max', () => {
+  const max = validate.max(2);
+  const next = jest.fn(identity);
+
+  expect(max(10, next)).toMatchValidationError({
+    type: 'max',
+    params: { max: 2, value: 10 }
+  });
+  expect(next).not.toHaveBeenCalled();
+
+  expect(max(-10, next)).toBe(-10);
+  expect(next).toHaveBeenCalledWith(-10);
+
+  expect(max(2, next)).toBe(2);
+  expect(next).toHaveBeenCalledWith(2);
+});
+
 test('filled', () => {
   const filled = validate.filled();
   const next = jest.fn(identity);
