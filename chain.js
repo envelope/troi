@@ -3,12 +3,12 @@ const { ValidationError, isValidationError } = require('./lib/errors');
 const validate = require('./lib/validate');
 const transform = require('./lib/transform');
 
-const handlers = { ...validate, ...transform };
-const keys = Object.keys(handlers);
+const factories = { ...validate, ...transform };
+const factoryNames = Object.keys(factories);
 
-const createBuilder = (middleware) => {
+const createBuilder = (middlewares) => {
   const builder = (value, next) => {
-    const result = run(middleware, value);
+    const result = run(middlewares, value);
 
     if (isValidationError(result)) {
       return result;
@@ -31,26 +31,25 @@ const createBuilder = (middleware) => {
     return result;
   };
 
-  keys
-    .forEach((key) => {
-      builder[key] = (...a) => {
-        const func = handlers[key](...a);
-        const nextMiddleware = [...middleware, func];
+  factoryNames.forEach((name) => {
+    builder[name] = (...args) => {
+      const middleware = factories[name](...args);
+      const nextMiddlewares = [...middlewares, middleware];
 
-        return createBuilder(nextMiddleware);
-      };
-    });
+      return createBuilder(nextMiddlewares);
+    };
+  });
 
   return builder;
 };
 
-const chainable = (factory) => (...args) => {
-  const validators = [factory(...args)];
-  return createBuilder(validators);
+const createFactoryBuilder = (middlewareFactory) => (...args) => {
+  const middlewares = [middlewareFactory(...args)];
+  return createBuilder(middlewares);
 };
 
-keys.forEach((key) => {
-  exports[key] = chainable(handlers[key]);
+factoryNames.forEach((name) => {
+  exports[name] = createFactoryBuilder(factories[name]);
 });
 
 exports.ValidationError = ValidationError;
