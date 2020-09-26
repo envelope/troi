@@ -31,6 +31,8 @@ const createBuilder = (middlewares) => {
     return result;
   };
 
+  builder.use = (middleware) => createBuilder([...middlewares, middleware]);
+
   factoryNames.forEach((name) => {
     builder[name] = (...args) => {
       const middleware = factories[name](...args);
@@ -52,5 +54,6 @@ factoryNames.forEach((name) => {
   exports[name] = createFactoryBuilder(factories[name]);
 });
 
+exports.use = (middleware) => createBuilder([middleware]);
 exports.ValidationError = ValidationError;
 exports.isValidationError = isValidationError;
