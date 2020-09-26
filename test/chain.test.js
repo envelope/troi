@@ -5,6 +5,8 @@ const transform = require('../lib/transform');
 const { ValidationError, isValidationError } = require('../lib/errors');
 
 test('example', () => {
+  const toNumber = (value, next) => next(parseFloat(value, 10));
+
   const schema = troi.object({
     username: troi.filled()
       .string()
@@ -16,19 +18,24 @@ test('example', () => {
     password: troi.filled()
       .string()
       .lengthBetween(3, 30)
-      .pattern(/^[a-zA-Z0-9]+$/)
+      .pattern(/^[a-zA-Z0-9]+$/),
+    pin: troi.filled()
+      .use(toNumber)
+      .integer()
   });
 
   const params = schema.validate({
     username: ' envelope ',
     email: 'JOHN@DOE.COM',
-    password: 'Secure1337'
+    password: 'Secure1337',
+    pin: '1337'
   });
 
   expect(params).toEqual({
     username: 'envelope',
     email: 'john@doe.com',
-    password: 'Secure1337'
+    password: 'Secure1337',
+    pin: 1337
   });
 });
 
@@ -85,5 +92,27 @@ describe('builder.validate()', () => {
       type: 'string',
       params: { value: 1234 }
     });
+  });
+});
+
+describe('builder.use()', () => {
+  it('returns a new chain with the provided middleware added', () => {
+    const middleware = jest.fn((value, next) => next(value));
+    const builder = troi.string();
+    const newBuilder = builder.use(middleware);
+
+    expect(builder).not.toBe(newBuilder);
+    expect(newBuilder.validate('string')).toBe('string');
+    expect(middleware).toHaveBeenCalledWith('string', expect.any(Function));
+  });
+});
+
+describe('chain.use()', () => {
+  it('returns a chain with the provided middleware', () => {
+    const middleware = jest.fn((value, next) => next(value));
+    const builder = troi.use(middleware);
+
+    expect(builder.validate('string')).toBe('string');
+    expect(middleware).toHaveBeenCalledWith('string', expect.any(Function));
   });
 });
