@@ -242,6 +242,30 @@ describe('oneOf', () => {
   });
 });
 
+describe('unique', () => {
+  it('returns validation error if array contains duplicate values', () => {
+    const array = [1, 2, 3, 1, 4, 5, 2];
+    const unique = validate.unique();
+    const next = jest.fn(identity);
+
+    expect(unique(array, next)).toMatchValidationError({
+      type: 'unique',
+      params: { value: array, duplicates: [1, 2] }
+    });
+
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('returns value if array contains unique values', () => {
+    const array = [1, 2, 3, 4, 5];
+    const unique = validate.unique();
+    const next = jest.fn(identity);
+
+    expect(unique(array, next)).toBe(array);
+    expect(next).toHaveBeenCalledWith(array);
+  });
+});
+
 test('pattern', () => {
   const regexp = /^\d+$/;
   const pattern = validate.pattern(regexp);

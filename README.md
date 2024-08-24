@@ -59,6 +59,7 @@ Work in progress
 #### `object(properties?: object)`
 #### `params(schema: object)`
 #### `oneOf(values: Array<any>)`
+#### `unique()`
 #### `between(min: number, max: number)`
 #### `min(min: number)`
 #### `max(max: number)`
