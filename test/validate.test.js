@@ -365,6 +365,37 @@ test('lengthBetween', () => {
   expect(next).toHaveBeenCalledWith(['a', 'b']);
 });
 
+test('length', () => {
+  const length = validate.length(3);
+  const next = jest.fn(identity);
+
+  expect(length('a', next)).toMatchValidationError({
+    type: 'length',
+    params: { expectedLength: 3, length: 1, value: 'a' }
+  });
+
+  expect(length('abcd', next)).toMatchValidationError({
+    type: 'length',
+    params: { expectedLength: 3, length: 4, value: 'abcd' }
+  });
+
+  expect(length(['a'], next)).toMatchValidationError({
+    type: 'length',
+    params: { expectedLength: 3, length: 1, value: ['a'] }
+  });
+
+  expect(length(['a', 'b', 'c', 'd'], next)).toMatchValidationError({
+    type: 'length',
+    params: { expectedLength: 3, length: 4, value: ['a', 'b', 'c', 'd'] }
+  });
+
+  expect(length('abc', next)).toBe('abc');
+  expect(next).toHaveBeenCalledWith('abc');
+
+  expect(length(['a', 'b', 'c'], next )).toEqual(['a', 'b', 'c']);
+  expect(next).toHaveBeenCalledWith(['a', 'b', 'c']);
+});
+
 test('between', () => {
   const between = validate.between(2, 4);
   const next = jest.fn(identity);

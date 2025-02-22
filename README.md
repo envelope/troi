@@ -66,6 +66,7 @@ Work in progress
 #### `lengthBetween(min: number, max: number)`
 #### `minLength(min: number)`
 #### `maxLength(min: number)`
+#### `length(expectedLength: number)`
 #### `pattern(regexp: RegExp, type?: string)`
 #### `email()`
 #### `lowercase()`
